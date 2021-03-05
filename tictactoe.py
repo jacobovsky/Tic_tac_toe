@@ -3,6 +3,16 @@ import random
 import math
 
 
+def transpose_matrix(matrix):
+    matrix_transposed = []
+    for jj in range(len(matrix[0])):
+        row = []
+        for j in range(len(matrix)):
+            row.append(matrix[j][jj])
+        matrix_transposed.append(row)
+    return matrix_transposed
+
+
 def get_new_table_after_move(table_state, move_index, player_symbol):
     table_state_list = list(table_state)
     table_state_list[move_index] = player_symbol
@@ -66,26 +76,18 @@ def check_position(initial_shape, position):
 
 
 def check_win_condition(table):
-    o_win = 'OOO'
-    x_win = 'XXX'
-    if table[:3] == o_win or table[3:6] == o_win or table[6:9] == o_win:
-        return 'O'
-    elif table[:3] == x_win or table[3:6] == x_win or table[6:9] == x_win:
-        return 'X'
-    elif table[:7:3] == o_win or table[1:8:3] == o_win or table[2:9:3] == o_win:
-        return 'O'
-    elif table[:7:3] == x_win or table[1:8:3] == x_win or table[2:9:3] == x_win:
-        return 'X'
-    elif table[0] + table[4] + table[8] == o_win:
-        return 'O'
-    elif table[0] + table[4] + table[8] == x_win:
-        return 'X'
-    elif table[2] + table[4] + table[6] == o_win:
-        return 'O'
-    elif table[2] + table[4] + table[6] == x_win:
-        return 'X'
-    else:
-        return 'draw'
+    table = [list(table)[3*i:3*i+3] for i in range(3)]
+    rows = table + transpose_matrix(table)
+    keys = [['O' for i in range(3)], ['X' for i in range(3)]]
+    for key in keys:
+        # vertical and horizontal
+        for row in rows:
+            if row == key:
+                return key[0]
+        # diagonal
+        if key == [table[i][i] for i in range(3)] or key == [table[i][2-i] for i in range(3)]:
+            return key[0]
+    return 'draw'
 
 
 def get_check_mate_index(table):
@@ -347,3 +349,5 @@ if __name__ == '__main__':
                         print(state_of_the_game)
         else:
             print("Bad parameters!")
+
+
